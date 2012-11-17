@@ -1,0 +1,10 @@
+#!/bin/sh
+
+for FILE in `ls`;do
+  zip -r game.love $FILE 
+done
+
+sleep 5
+chmod 777 game.love
+sleep 3
+sh game.love
