@@ -3,4 +3,18 @@ TargetRogue
 TargetRogue is a love2D based framework for creating 2D, turnbased shooting games with roguelike elements.
 
 Initial commit contains the source for Pimps vs Vamps, a game developed in 7 days for "F*ck this Jam" game jam.
-See license for more details on using the framework, as well as what other information regarding libraries it uses.
+See license for more details on using the framework, as well as what other information regarding the libraries it uses.
+
+Note: The framework has been used in the development of Pimps vs Vamps. Assets used in Pimps vs Vampires are not distributed with 
+the framework. They are the work of Thomas Noppers (@thomasnoppers, www.grundysoft.com) and are not licensed under CC-A 3.0, like the framework.
+If you want to build the framework with the assets it uses, feel free the download the game (http://bmo.fuckthisjam.com/submissions/44-pimps-vs-vamps),
+and copy the contents of the assets from the gfx folder. 
+
+SFX: 
+Grundy - Pimps vs Vampires Theme 01.mp3 - property of Thomas Noppers. 
+All the other sounds effects have been created by the following:
+- lemudcrab
+- aust-paul
+- bevangoldswain
+- soundscalpel
+

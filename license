@@ -1,0 +1,9 @@
+
+TargetRogue framework (the code) is distributed under the Creative Commons - Atribution 3.0 license. 
+For more details regarding the license: http://creativecommons.org/licenses/by/3.0/
+
+TargetRogue makes use of the following libraries:
+- Jumper (https://github.com/Yonaba/Jumper)
+
+TargetRogue contains parts of code from LOVELike, licensed under CC-A 3.0.
+https://love2d.org/forums/viewtopic.php?f=5&t=1942&start=30
