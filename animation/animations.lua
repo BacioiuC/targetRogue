@@ -64,7 +64,7 @@ function animation:getCurrentFrame(_id)
 end
 
 ------------------------------------------------------
--- playAnimation: 
+-- LoopAnimation: 
 -- _id - id of the animation
 -- _timePerFrame - for how much time do you want the
 -- animation to be displayed
