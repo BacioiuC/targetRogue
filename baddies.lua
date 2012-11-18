@@ -63,9 +63,7 @@ end
 function BalanceEnemies( )
 
 	if enemy:getCurrentEnemies( ) < 4 then
-		enemy:spawnNewEnemy( )
-		--enemy:spawnTier2Enemy( )
-		
+		enemy:spawnNewEnemy( )	
 	end
 	
 	if eKillCounter >= 4 then
@@ -560,74 +558,41 @@ function enemy:retrieveBatTypesID( )
 
 end
 
-function enemy:loopAnims( )
-
-	if love.timer.getMicroTime() > animTimer + 0.05 then
-		if batImageLoop < 10 then
-			batImageLoop = batImageLoop + 1
-		else
-			batImageLoop = 1
-		end
-		animTimer = love.timer.getMicroTime()
-	end
-
-
-end
-
-
 function enemy:draw(lx,ly)
 
 	for i,v in ipairs( self.table ) do
-     	--if v.x == zx and v.y == zy then
-     		love.graphics.setColor(255,255,255)
-			--for ey=1, map.camera_height do		-- loop #1 (y-axis) 
-	     		 --for ex=1, map.camera_width do
-					if (v.x == lx) and (v.y == ly) then
-		     		 	--if (ex+map.x == v.x) and (ey+map.y == v.y) then
-		     		 	
-		     		 	-- Tweening x = x + (target -x) *0.1
-		     		 		--v.enemy_x = v.x + (v.x - v.oldx) * 0.1
-		     		 		--v.enemy_y = v.y + (v.y - v.oldy) * 0.1
-		     		 		if v.hp > v.initialHP then v.hp = v.initialHP end ----- Quick hack to keep enemy T2 vamps at max health.
-		     		 		
-		     		 			if v.isTagged == false then
-				     		 		if v.x < hero.x then
-										--love.graphics.draw(tile.mob[v.type], (ex*tile.w) - tile.w + map.camera_offset_x, (ey*tile.h) - tile.h + map.camera_offset_y)
-										if v.type >= 8 and v.type <= 12 and distance2enemy(i) > 3 then
-											love.graphics.draw(bat_anim[batImageLoop],(v.x - map.x) *32, (v.y - map.y) *32)
-										else
-											love.graphics.draw(tile.mob[v.type],(v.x - map.x) *32, (v.y - map.y) *32)
-										end
-									else
-										if v.type >= 8 and v.type <= 12 and distance2enemy(i) > 3 then
-											love.graphics.draw(bat_anim[batImageLoop],(v.x - map.x) *32, (v.y - map.y) *32,0,-1,1,32,0)
-										else
-										--love.graphics.draw(tile.mob[v.type], (ex*tile.w) - tile.w + map.camera_offset_x, (ey*tile.h) - tile.h + map.camera_offset_y,0,-1,1,32,0)	
-											love.graphics.draw(tile.mob[v.type],(v.x - map.x) *32, (v.y - map.y) *32,0,-1,1,32,0)
-										end
-									end
-								else
-								
-									love.graphics.draw(v.TaggImg,(v.x - map.x) *32, (v.y - map.y) *32,0,-1,1,32,0)
-									
-								end
-							local scaleFactor = 1 - ( (100 - ( (100 * v.hp) / v.initialHP ) ) / 100 )
-							love.graphics.draw(hb_background, (v.x - map.x) * 32, (v.y - map.y) * 32 - 5)
-							love.graphics.draw(hb_foreground, (v.x - map.x) * 32, (v.y - map.y)  * 32 - 5, 0, scaleFactor  ,1)
-							--love.graphics.print(""..v.s.."", (v.x - map.x) * 32, (v.y - map.y) * 32 )
-							if v.takingDamage == true then 
-								enemy:spillBlood( v.s, (v.x - map.x) * 32, (v.y - map.y) * 32 )
-							end
-							
-						--end
+ 		love.graphics.setColor(255,255,255)
+		if (v.x == lx) and (v.y == ly) then
+	 		if v.hp > v.initialHP then v.hp = v.initialHP end ----- Quick hack to keep enemy T2 vamps at max health.
+		 		if v.isTagged == false then
+     		 		if v.x < hero.x then
+							if v.type >= 8 and v.type <= 12 and distance2enemy(i) > 3 then
+								animation:loopAnimation(1, 0.1, (v.x - map.x) *32, (v.y - map.y) *32, false )
+						else
+							love.graphics.draw(tile.mob[v.type],(v.x - map.x) *32, (v.y - map.y) *32)
+						end
+					else
+						if v.type >= 8 and v.type <= 12 and distance2enemy(i) > 3 then
+							animation:loopAnimation(1, 0.1, (v.x - map.x) *32, (v.y - map.y) *32, true )
+						else
+							love.graphics.draw(tile.mob[v.type],(v.x - map.x) *32, (v.y - map.y) *32,0,-1,1,32,0)
+						end
 					end
-				--end
-			--end
-			
+				else
+					love.graphics.draw(v.TaggImg,(v.x - map.x) *32, (v.y - map.y) *32,0,-1,1,32,0)
+				end
+			local scaleFactor = 1 - ( (100 - ( (100 * v.hp) / v.initialHP ) ) / 100 )
+			love.graphics.draw(hb_background, (v.x - map.x) * 32, (v.y - map.y) * 32 - 5)
+			love.graphics.draw(hb_foreground, (v.x - map.x) * 32, (v.y - map.y)  * 32 - 5, 0, scaleFactor  ,1)
+			if v.takingDamage == true then 
+				
+				enemy:spillBlood( v.s, (v.x - map.x) * 32, (v.y - map.y) * 32 )
+				if animation:getCurrentFrame(2) == animation:getFrames(2) then
+					v.takingDamage = false					
+				end
+			end
+		end
 
-		--end
-	
-	--love.graphics.print(""..v.hp.."",(v.x - map.x) * 32 + 14, (v.y - map.y)  * 32 - 5)
 	end	 -- end for inpairs
 
 end
@@ -678,26 +643,7 @@ function enemy:attackPlayer( s )
 end
 
 function enemy:spillBlood( s, pos__x, pos__y )
-
-	--if love.timer.getMicroTime() > bloodTimer + 0.1 then
-		love.graphics.draw(bloodP[self.table[s].bloodFrame],pos__x, pos__y)
-
-			
-		if  self.table[s].bloodFrame < 5 then
-			if love.timer.getMicroTime() > self.table[s].bloodTimer + 0.25 then
-				self.table[s].bloodFrame = self.table[s].bloodFrame + 1
-				self.table[s].bloodTimer = love.timer.getMicroTime() 
-			end
-			
-		else
-			self.table[s].bloodFrame = 1
-			self.table[s].takingDamage = false
-		end
-
-		
-
-	--end
-
+		animation:loopAnimation(2,0.1,pos__x,pos__y, false)
 end
 
 function setupEnemies( )

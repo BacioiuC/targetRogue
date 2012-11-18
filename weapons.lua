@@ -53,7 +53,6 @@ function weapons:doDamage(target)
 		damageDone = math.floor( math.random(weapons:getWeaponDamage(currentWeaponID) ) - distance2enemy(target))
 	end
 	return damageDone
-
 end
 
 

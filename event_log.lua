@@ -30,13 +30,10 @@ function displayEventLog( )
 	displayWeaponSlots( 4 )
 	
 	love.graphics.draw(cross_hair,(getMouseX()-map.x)*tile.w, (getMouseY()-map.y)*tile.h)
-	--love.graphics.print(""..(getMouseX()).." | "..(getMouseY()),(getMouseX()-map.x)*tile.w+20, (getMouseY()-map.y)*tile.h-20)
 	if #Events > max_events then
 		removeEvent( )
 	end
-	--enemy:drawLine( )
-	
-	
+
 	if love.keyboard.isDown("5") then
 		t_posY = t_posY -1
 	elseif love.keyboard.isDown("6") then
@@ -49,20 +46,17 @@ function displayEventLog( )
 		end
 	end
 	
-
-
+	
 end
 
 function displayTopBar( )
 	test_MinDmg, test_MaxDmg = weapons:getWeaponDamage(1)
-	
 	love.graphics.draw(top_bar,0,0)
 	love.graphics.print("Health: "..hero.hp.." | Level: "..hero.lvl.." | Action Points: "..hero.ActionPoints.." | FPS: "..love.timer.getFPS( ).."Test Weapon min dmg:"..test_MinDmg.." Max Dmg: "..test_MaxDmg.."",6,3)
-
+	love.graphics.print("Animation Frames: "..animation:getFrames(1).." ", 6, 23)
 end
 
 function displayDamageDealth( string, x, y)
-
 		love.graphics.print( string, x, y )
 end
 
@@ -87,19 +81,19 @@ function displayWeaponSlots( nr )
 end
 
 function insertEvent( string )
-
 	table.insert(Events, string)
-
 end
 
 
 function removeEvent( )
-
 	table.remove(Events,1)
-	--for i = 1, #self.table do
-		--self.table[i].s = i
-	--end
-
 end
 
+ function handleMiscEvents( )
+ 	if miscEventBool == true then
+ 		insertEvent(miscEventString)
+ 		miscEventBool = false
+ 	end 
+ end
+ 
 return Events

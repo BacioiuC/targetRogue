@@ -1,8 +1,8 @@
 
 function setupMap()
 
-	map.width = mapTilesX													-- Map Size Width (X Axis)
-	map.height = mapTilesY										-- Map Size Height (Y Axis)
+	map.width = mapTilesX											-- Map Size Width (X Axis)
+	map.height = mapTilesY											-- Map Size Height (Y Axis)
 	map.x = 0														-- Reset Current X Map Position
 	map.y = 0														-- Reset Current Y Map Position
 	map.camera_offset_x = 32										-- Pseudo-Camera Window Desired PX Offset (X) -Put 0 to move it to left of the window-
@@ -61,7 +61,6 @@ end
 function setupLayer_LOW()
 
 	generateEmptyMap ( )
-	--generateExploreMap ( )
 	
 	map.walk={ 
 		1,0,0,0,0,0,1,1,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0 -- 1 = walkable map, 0 = interdit tile map -TO DO- convert to Boolean
@@ -89,7 +88,7 @@ function setupLayer_HI ()	-- setup  of above the head elements
   
     -- empty for now since no roof/high trees elements are used yet!
 
-end -- end function --
+end
 
 function dist2d(x1,y1, x2,y2)
 	return ((x2-x1)^2+(y2-y1)^2)^0.5
@@ -99,8 +98,8 @@ function draw_map()
 	local ww, hh = (visW+1)/2, (visH+1)/2
 
  	
-  for y=1, map.camera_height do		-- loop #1 (y-axis) 
-		for x=1, map.camera_width do	-- loop #2 (x-axis)  
+  for y=1, map.camera_height do		 
+		for x=1, map.camera_width do	
   
       	love.graphics.setColor(90,90,90)
 
@@ -111,9 +110,9 @@ function draw_map()
 			            (y*tile.h) - tile.h + map.camera_offset_y)
 			end
 
-      end	-- end of loop #2 (x-axis)
-   end		-- end of loop #1 (y-axis)
-    --love.graphics.draw( tile.hero, hero.x*tile.w,  hero.y*tile.h, math.rad(tRotation),1,1,16,16)
+      end	
+   end		
+
 
     
   	if octans then
@@ -126,8 +125,6 @@ function draw_map()
 				love.graphics.setColor(190,190,190)
 			else
 				love.graphics.setColor(155,155,155)
-			--else
-				--love.graphics.setColor(80,80,80)
 			end
 			
 			if v.y < map.camera_height+map.y then				
@@ -145,20 +142,18 @@ function draw_map()
 	love.graphics.print("HP: "..hero.hp,0,0)
     drawMuzzle( )  
       
-    for y=1, map.camera_height do		-- loop #1 (y-axis) 
-		for x=1, map.camera_width do	-- loop #2 (x-axis)    
+    for y=1, map.camera_height do	 
+		for x=1, map.camera_width do
 			player_renderx = (x*tile.w) - tile.w + 16 + map.camera_offset_x
 			player_rendery = (y*tile.h) - tile.h + 16 + map.camera_offset_y
 
 			if (x+map.x == hero.x) and (y+map.y == hero.y) then 
 				if ORIENTATION == 4 then
 					love.graphics.draw( tile.hero, player_renderx,  player_rendery, 0,1,1,16,16)
-					--love.graphics.draw(WeaponDraw,(hero.x-map.x)*32,(hero.y-map.y)*32)
 					sx = 1
 					offset = 0
 				elseif ORIENTATION == 3 then
 					love.graphics.draw( tile.heroLeft, player_renderx,  player_rendery, 0,1,1,16,16)
-					--love.graphics.draw(lWeaponDraw,(hero.x-map.x)*32,(hero.y-map.y)*32) 
 					sx = -1
 					offset = 32
 				end

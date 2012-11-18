@@ -6,6 +6,7 @@ require("fov")
 require("TLfres")
 require("event_log")
 require("weapons")
+require("animation.animations")
 local Jumper = require('lib.jumper.init')
 
 --[[
@@ -17,8 +18,8 @@ forums.
 -----------------------------------------------------------------------------
 -- INITIALZING VARS
 -----------------------------------------------------------------------------
-mapTilesX = 64 -- width of the map
-mapTilesY = 64 -- height of the map
+mapTilesX = 64 
+mapTilesY = 64 
 
 visW, visH, fs = 49, 31, 16
 
@@ -42,8 +43,6 @@ function love.load()
 	map.explore = {}
 	hero = {}
 	mob = {}   
-	bat_anim = { }
-	bloodP = { }
 	dmg_anim = { }
 	death_anim = { }
 	muzzle_anim = { }
@@ -91,6 +90,10 @@ function love.load()
 	miscEventString = ""
 	miscEventBool = false
 	
+	
+	animation:init( )
+	animation:new( 1, "gfx/batmode-", 10)
+	animation:new( 2, "gfx/Blood",5)
 
 	
 end -- end function --
@@ -100,23 +103,7 @@ function setupJumper( )
  	pather = Jumper(map.collision, 0, false)
  
  end
- 
- function handleMiscEvents( )
- 	if miscEventBool == true then
- 		insertEvent(miscEventString)
- 		miscEventBool = false
- 	end 
- end
- 
-function performMovement( dapath )
-	--[[if path then
-		--success = love.filesystem.write("jumper.astar", "return"..table.tostring( tableJumper ))
-			--for i = 1, #tableJumper do
-				--love.graphics.print("Value X: "..tableJumper[i].x.." Value Y: "..tableJumper[i].y.."",0,64+i*20)
-				return tableJumper[currentStep+1].x, tableJumper[currentStep+1].y
-			--end
-	end--]]
-end
+
 
 function setupGFX()
 
@@ -170,15 +157,8 @@ function setupGFX()
 	weapon_slot:setFilter( "nearest", "nearest")
 	weapon_slot_activated = love.graphics.newImage("gfx/weapon_slot_activated.png")
 	weapon_slot_activated:setFilter( "nearest", "nearest")
-	
-	--temp_bat = love.graphics.newImage("gfx/mob13.png")
-	--temp_bat:setFilter( "nearest", "nearest")
-	for i = 1, 10 do
-		bat_anim[i] = love.graphics.newImage( "gfx/batmode-"..i..".png" )
-		bat_anim[i]:setFilter( "nearest", "nearest")
-	end
+
 	menu_background = love.graphics.newImage("gfx/menu_background.png")
-	batImageLoop = 1
 	
 	for i = 1, 5 do
 		death_anim[i] = love.graphics.newImage("gfx/death_anim"..i..".png")
@@ -201,11 +181,6 @@ function setupGFX()
 	-------------------------------------------------------
 	-- Blood particles
 	-- ----------------------------------------------------
-	
-	for i = 1, 5 do
-		bloodP[i] = love.graphics.newImage("gfx/Blood"..i..".png")
-		bloodP[i]:setFilter( "nearest", "nearest")
-	end
 	----------------------------
 	-- Enemy Kill counter. It increments when an enemy dies
 	-- we use it to spawn more powerful bitches!
@@ -734,31 +709,8 @@ end
 -----------------------------------------------------------------------------
 function gun_combat( s )
 
-	
-	
-	--[[if currentWeaponID == 1 then	
-		hero.ActionPoints = hero.ActionPoints - 4
-		
-	elseif currentWeaponID == 2 then
-		hero.ActionPoints = hero.ActionPoints - 8
-	elseif currentWeaponID == 3 then
-		hero.ActionPoints = hero.ActionPoints - 12
-	elseif currentWeaponID == 4 then
-		hero.ActionPoints = hero.ActionPoints - 8
-		hero.tagUsed = hero.tagUsed + 1
-	end--]]
 	hero.ActionPoints = hero.ActionPoints - weapons:returnAP(currentWeaponID)
-	
-	--[[if currentWeaponID == 3 and distance2enemy(s) > 4 then
-		hero.damage = 0	
-		pMovementString = "You used - The Shotgun - against "..enemy.table[s].name.." for a long range attack. It's not very effective"
-		insertEvent(pMovementString)
-	else
-		hero.damage = math.floor(math.random(hero.minDamage, hero.maxDamage) - distance2enemy(s))
-		if hero.damage < 0 then hero.damage = 0 end
-		pMovementString = "You shot "..enemy.table[s].name.." for "..hero.damage.." "
-		insertEvent(pMovementString)
-	end--]]
+
 	
 	hero.damage = weapons:doDamage(s)
 	pMovementString = "You shot "..enemy.table[s].name.." for "..hero.damage.." "
@@ -770,7 +722,6 @@ function gun_combat( s )
 	enemy.table[s].takingDamage = true
 	hero.hasShoot = true
 	
-	-- If the stun weapon is used beyond it's 3 limit:
 		if hero.tagUsed == 3 then
 			if hero.hp > 0 then
 				hero.hp = hero.hp - math.random(5,15)
@@ -797,21 +748,15 @@ function love.mousepressed(x,y, button )
 	end
 
 	if testingJumper == false then
-	
 		for i = 1, enemy:getCurrentEnemies( ) do	
-			--if hero.ActionPoints >= 4 then	
-			
-				if button == "l" and getMouseX( ) == enemy:checkX(i) and getMouseY( ) == enemy:checkY(i) then
-					enemy:alterHp(i,gun_combat( i ))
-					enemy:isDead(i)
-						if currentWeaponID == 3 then
-							enemy:knockBack(i,ORIENTATION)
-						end
-					--actionsDuringEnemyTurn()
-					
-					--enemy:move(i)
-				end
-			--end
+			if button == "l" and getMouseX( ) == enemy:checkX(i) and getMouseY( ) == enemy:checkY(i) then
+				enemy:alterHp(i,gun_combat( i ))
+				enemy:isDead(i)
+					if currentWeaponID == 3 then
+						enemy:knockBack(i,ORIENTATION)
+					end
+
+			end
 		end
 	end
 end -- function
@@ -837,27 +782,21 @@ function combat( s )
 	combat_on = 1
 
 	diceRoll_Combat = math.random(1,6)
-	hero.turn = hero.turn+1	-- attack is also a move/turn
-		if diceRoll_Combat >= 2 and diceRoll_Combat<6 then	-- simple random fight combat  (at least 3 hurts mob, less than that hero gets "PAIN") 
+	hero.turn = hero.turn+1	
+		if diceRoll_Combat >= 2 and diceRoll_Combat<6 then	
 			pMovementString = "You stabbed "..enemy.table[s].name.." for 4 damage"
-			enemy:alterHp(s,4) -- mob.hp = mob.hp - 1
+			enemy:alterHp(s,4) 
 			hero.totalDamage = hero.totalDamage + 4
 			love.audio.play(snd.hit)	
-		elseif diceRoll_Combat >= 6 then -- Same Damage + Knockback
+		elseif diceRoll_Combat >= 6 then 
 			pMovementString = "You stabbed "..enemy.table[s].name.." for 6 damage"
 			hero.totalDamage = hero.totalDamage + 6
 			enemy:alterHp(s,6)
 			love.audio.play(snd.hit)	
 		end
 		
-		--[[if hero.hp <= 0 then	-- hero is dead, prepare game over
-			hero.killed_by = mob.random	-- mark wich mob killed hero 
-			checkRecords() -- checks wich records are achieved
-			game_state = "ripState" 
-		end--]]
-		
 		enemy:isDead( s )
-end -- end function --
+end
 
 -----------------------------------------------------------------------------
 
@@ -881,7 +820,7 @@ function checkRecords ()
     	record.hero_lvl_badge = 0
     end
     
-	-- checks if hero made more XP than before				    
+			    
 	if hero.xp > record.hero_xp then 
 		record.hero_xp_previous = record.hero_xp
     	record.hero_xp = hero.xp
@@ -922,13 +861,11 @@ function updateIntro()
    end	
 end 
 
------------------------------------------------------------------------------
 
 function updatePlay()
     turnUpdate( )
 end -- end function --
 
------------------------------------------------------------------------------
 
 function updateHelp()
          	
@@ -936,29 +873,20 @@ function updateHelp()
       
       if key == 'escape' then
 		game_state = "playState"
-		--love.audio.play(snd.level)
       end
       
-    end -- end function (love.keypressed)
+    end 
 
-end -- end function --
-
+end 
 -----------------------------------------------------------------------------
 
 function updatePause()
-         	
 	function love.keypressed(key, unicode)
-
-   	-- key for return to game
-    
-      if key == 'escape' then
+       if key == 'escape' then
 		game_state = "playState"
-		--love.audio.play(snd.level)
       end
-      
-    end -- end function (love.keypressed)
-
-end -- end function --
+    end 
+end 
 
 -----------------------------------------------------------------------------
 
@@ -985,12 +913,8 @@ function updateDebriefing()
 end -- end function --
 
 function updateStateChange( )
-	--895, 635
-	
 	enemy:dropBaddies( )
-	
-	
-	--function love.mousepressed (x,y, button)
+
 	if love.mouse.isDown("l") then
 		x = love.mouse.getX()
 		y = love.mouse.getY()
@@ -1002,21 +926,15 @@ function updateStateChange( )
 			
 		end
 	end
-	
-	
-	--end
-	
+
 	
 	function love.keypressed(key, unicode)
-	
-	-- SPACE to restart	
 	 	enemy:dropBaddies( )
 		if key == '.' then
 			restartGame() 
 	    	game_state = "playState" 			
 	  	end
-	 
-	end -- end function --
+	end 
 
 end
 -----------------------------------------------------------------------------
@@ -1028,7 +946,6 @@ function love.update()
 	elseif(game_state == 'StateChange') then updateStateChange( )
 	elseif(game_state == 'playState') then
 	 updatePlay()  	
-	 enemy:loopAnims( )
 	elseif(game_state == 'ripState' or game_state == 'goalState') then updateDebriefing()
 	elseif(game_state == 'drawStateChange') then updateStateChange( )
 	elseif(game_state == 'helpState') then updateHelp() 	
@@ -1051,8 +968,7 @@ end -- end function --
 
 function drawIntro()
 	love.mouse.setVisible(true)
-	bgDraw () -- call backgroud draw routine
-	--love.graphics.print("Press SPACE to begin!", 500,700)  
+	bgDraw ()
 
 	if soundOn == true then
 		love.graphics.draw(PvsV_Button_Sound, 10, 740)
@@ -1066,7 +982,6 @@ function drawIntro()
 	
 	x = love.mouse.getX( )
 	y = love.mouse.getY( )
-	--function love.mousepressed(x,y, button)
 	if love.mouse.isDown("l") then
 		if x > 470 and x < 470 + 61 and y > 500 and y < 521 then
 			love.mouse.setVisible(false)	
@@ -1074,7 +989,6 @@ function drawIntro()
 			game_state = "playState" 
 					
 		elseif x > 470 and x < 470 + 61 and y > 550 and y < 571 then
-			--game_state = "credits"
 			love.graphics.draw(PvsP_Menu_Credits,288,45)
 		elseif x > 470 and x < 470 + 61 and y > 600 and y < 621 then
 			love.event.quit( )
@@ -1101,10 +1015,6 @@ function drawPlay()
 	love.graphics.setBackgroundColor(1,1,1)
 	draw_map()	  
 	data = map.data[hero.y][hero.x]   
-	--drawPlayerHealthBar( )
-	--enemy:spillBlood( 1 )
- 	--love.graphics.setColor( 255, 255, 255, 255)
- 	
 	printJumperValues()
 end -- end function --
 
@@ -1158,41 +1068,26 @@ end
 -----------------------------------------------------------------------------
 
 function love.draw()
-	--love.mouse.setVisible(false)
-	--TLfres.transform()
-	
 	if(game_state == 'nullState') then drawNull()
 	elseif(game_state == 'introState') then drawIntro()
 	elseif(game_state == 'StateChange') then drawStateChange()
 	elseif(game_state == 'playState') then 
 		drawPlay()  
-		--debugctionsDuringEnemyTurn( )
 		displayEventLog( )
-		
-		--if love.keyboard.isDown("t") then
-			--removeEvent( )
-			
-		--end
-		--love.graphics.print(""..distanceToPlayer(enemy:checkX(1),enemy:checkY(1), hero.x, hero.y).."",400,0)
 	elseif(game_state == 'ripState' or game_state == "goalState") then drawDebriefing()
 	elseif(game_state == 'drawStateChange') then  drawStateChange( )
 	elseif(game_state == 'helpState') then drawHelp()		
 	elseif(game_state == 'pauseState') then drawPause()	
 	elseif(game_state == 'quitState') then drawQuit()	
 	else error('game_state is not valid')
-	end -- end if --
-	
-	--TLfres.letterbox(4,3)
- 	
- 	--performMovement(path)
+	end 
 end -- end function --
 
 -----------------------------------------------------------------------------
 
 function love.quit()
-	-- do save rotines here
 	love.event.push("q")
-end -- end function --
+end 
 
 -----------------------------------------------------------------------------
 -- END CODE --
@@ -1213,34 +1108,5 @@ function printJumperValues (  )
 	end
 end
 
-function StepByStep(dapath)
-	tableJumper = path
-	currentStep = 1
 
-end
-
-
-function computeLight( )
-	
-	for i = 1, 64 do
-		for j = 1, 64 do
-			
-			
-			
-		end
-	end
-
-end
-
---enemy:debugPathTowardsPlayer(s, path)
-function debugctionsDuringEnemyTurn( )
-	--[[for i = 1, enemy:getCurrentEnemies( ) do
-		if enemy:getHp(i) > 0 then
-				spath, slength = pather:getPath(enemy:checkX(i),  enemy:checkY(i), hero.x,hero.y)
-				if spath then
-					enemy:debugPathTowardsPlayer(i,spath)
-				end
-		end
-	end--]]
-end
 
