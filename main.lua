@@ -6,6 +6,7 @@ require("fov")
 require("event_log")
 require("weapons")
 require("animation.animations")
+require("ui.ui")
 local Jumper = require('lib.jumper.init')
 
 --[[
@@ -95,6 +96,12 @@ function love.load()
 	animation:new( 2, "gfx/Blood",5)
 	animation:new( 3, "gfx/damagePlayer",7)
 
+
+	-------------------------------------
+	-- UI Elements
+	-------------------------------------
+	ui:init()
+	ui:newItemBar(1,100,200,256,64,"gfx/PvsP_Menu_Lowerbar.png", "gfx/PvsP_Menu_Lowerbar.png")
 	
 end -- end function --
 
@@ -862,6 +869,7 @@ end
 
 function updatePlay()
     turnUpdate( )
+    ui:update( )
 end -- end function --
 
 
@@ -1013,7 +1021,9 @@ function drawPlay()
 	love.graphics.setBackgroundColor(1,1,1)
 	draw_map()	  
 	data = map.data[hero.y][hero.x]   
-	printJumperValues()
+	--printJumperValues()
+	
+	ui:drawItemBar(1)
 end -- end function --
 
 -----------------------------------------------------------------------------
@@ -1072,6 +1082,12 @@ function love.draw()
 	elseif(game_state == 'playState') then 
 		drawPlay()  
 		displayEventLog( )
+		if love.keyboard.isDown("lshift") then
+			love.mouse.setVisible(true)
+		else
+			love.mouse.setVisible(false)
+		end
+		
 	elseif(game_state == 'ripState' or game_state == "goalState") then drawDebriefing()
 	elseif(game_state == 'drawStateChange') then  drawStateChange( )
 	elseif(game_state == 'helpState') then drawHelp()		
