@@ -1,0 +1,6 @@
+TargetRogue
+================================
+TargetRogue is a love2D based framework for creating 2D, turnbased shooting games with roguelike elements.
+
+Initial commit contains the source for Pimps vs Vamps, a game developed in 7 days for "F*ck this Jam" game jam.
+See license for more details on using the framework, as well as what other information regarding libraries it uses.
