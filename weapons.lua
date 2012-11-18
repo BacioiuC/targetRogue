@@ -57,8 +57,4 @@ end
 
 
 
-
-
-
-
 return weapons

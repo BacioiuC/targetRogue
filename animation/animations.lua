@@ -4,8 +4,8 @@ animation = { }
 function animation:init( )
 	self.animationTable = { }
 	animationSpeed = 1
-	self.timer = love.timer.getMicroTime()
-	self.framePos = 1
+	--self.timer = love.timer.getMicroTime()
+	--self.framePos = 1
 end
 
 ------------------------------------------------------
@@ -23,6 +23,8 @@ function animation:new( _id, _baseName, _frameNr)
 	tempHolder.id = _id
 	tempHolder.frameNr = _frameNr
 	tempHolder.reset = true
+	tempHolder.timer = love.timer.getMicroTime()
+	tempHolder.framePos = 1
 	
 	for i = 1, _frameNr do
 		imageFrame = love.graphics.newImage("".._baseName..""..i..".png")
@@ -42,16 +44,17 @@ end
 -- with getCurrentFrame() and getFrames()
 ------------------------------------------------------
 function animation:playAnimation(_id, _timePerFrame, _posX, _posY, flip)
-	if self.framePos < #self.animationTable[_id].frames then
-		if love.timer.getMicroTime() > self.timer + _timePerFrame then
-			self.framePos = self.framePos + 1
-			self.timer = love.timer.getMicroTime()
+
+	if self.animationTable[_id].framePos < #self.animationTable[_id].frames then
+		if love.timer.getMicroTime() > self.animationTable[_id].timer + _timePerFrame then
+			self.animationTable[_id].framePos = self.animationTable[_id].framePos + 1
+			self.animationTable[_id].timer = love.timer.getMicroTime()
 		end
 	end
 	if flip == true then
-		love.graphics.draw(self.animationTable[_id].frames[self.framePos],_posX, _posY,0,-1,1,self.animationTable[_id].frames[self.framePos]:getWidth(),0)	
+		love.graphics.draw(self.animationTable[_id].frames[self.animationTable[_id].framePos],_posX, _posY,0,-1,1,self.animationTable[_id].frames[self.animationTable[_id].framePos]:getWidth(),0)	
 	else
-		love.graphics.draw(self.animationTable[_id].frames[self.framePos],_posX, _posY,0,1,1,0,0)		
+		love.graphics.draw(self.animationTable[_id].frames[self.animationTable[_id].framePos],_posX, _posY,0,1,1,0,0)		
 	end		
 end
 
@@ -60,7 +63,7 @@ function animation:setFrame(_id, frame)
 end
 
 function animation:getCurrentFrame(_id)
-	return self.framePos
+	return self.animationTable[_id].framePos
 end
 
 ------------------------------------------------------
@@ -74,19 +77,19 @@ end
 -- is called
 ------------------------------------------------------
 function animation:loopAnimation(_id, _timePerFrame, _posX, _posY, flip)
-	if self.framePos < #self.animationTable[_id].frames then
-		if love.timer.getMicroTime() > self.timer + _timePerFrame then
-			self.framePos = self.framePos + 1
-			self.timer = love.timer.getMicroTime()
+	if self.animationTable[_id].framePos < #self.animationTable[_id].frames then
+		if love.timer.getMicroTime() > self.animationTable[_id].timer + _timePerFrame then
+			self.animationTable[_id].framePos = self.animationTable[_id].framePos + 1
+			self.animationTable[_id].timer = love.timer.getMicroTime()
 		end
 	else
-		self.framePos = 1				
+		self.animationTable[_id].framePos = 1				
 	end	
 	
 	if flip == true then
-		love.graphics.draw(self.animationTable[_id].frames[self.framePos],_posX, _posY,0,-1,1,self.animationTable[_id].frames[self.framePos]:getWidth(),0)	
+		love.graphics.draw(self.animationTable[_id].frames[self.animationTable[_id].framePos],_posX, _posY,0,-1,1,self.animationTable[_id].frames[self.animationTable[_id].framePos]:getWidth(),0)	
 	else
-		love.graphics.draw(self.animationTable[_id].frames[self.framePos],_posX, _posY,0,1,1,0,0)		
+		love.graphics.draw(self.animationTable[_id].frames[self.animationTable[_id].framePos],_posX, _posY,0,1,1,0,0)		
 	end
 
 end

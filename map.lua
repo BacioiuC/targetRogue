@@ -165,7 +165,9 @@ function draw_map()
 		end
 	end
 	
-	if playerDeathAnim == true then enemy:playDeathAnimation() end
+	if playerDeathAnim == true then 
+		enemy:playDeathAnimation()
+	end
 	
 	
 

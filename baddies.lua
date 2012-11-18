@@ -44,18 +44,11 @@ function enemy:removeFromTable( s )
 end
 
 function enemy:playDeathAnimation()
-	love.graphics.draw(dmg_anim[deathID],(hero.x - map.x)*32,(hero.y - map.y)*32)
-	
-	if deathID < 7 then
-		if love.timer.getMicroTime() > jDeathTimer + 0.05 then
-			deathID = deathID + 1
-			jDeathTimer = love.timer.getMicroTime()		
-			
-		end
-	else
-		deathID = 1
+	animation:playAnimation(3,0.05,(hero.x - map.x)*32,(hero.y - map.y)*32, false)
+	if animation:getCurrentFrame(3) == animation:getFrames(3) then
 		playerDeathAnim = false	
-	end	
+		animation:setFrame(3,1)
+	end
 	
 
 end

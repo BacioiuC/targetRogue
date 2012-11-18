@@ -42,7 +42,7 @@ function love.load()
 	map.explore = {}
 	hero = {}
 	mob = {}   
-	dmg_anim = { }
+	
 	death_anim = { }
 	muzzle_anim = { }
 	muzzle_timer = love.timer.getMicroTime()
@@ -93,6 +93,7 @@ function love.load()
 	animation:init( )
 	animation:new( 1, "gfx/batmode-", 10)
 	animation:new( 2, "gfx/Blood",5)
+	animation:new( 3, "gfx/damagePlayer",7)
 
 	
 end -- end function --
@@ -214,9 +215,7 @@ function setupGFX()
 	-- PLAYER Damage animation
 	--------------------------
 	--[[damagePlayer1.png--]]
-	for i = 1, 7 do
-		dmg_anim[i] = love.graphics.newImage("gfx/damagePlayer"..i..".png")
-	end
+
 	
 	
 	PvsV_Button_Sound = love.graphics.newImage("gfx/PvsV_Button_Sound.png")
